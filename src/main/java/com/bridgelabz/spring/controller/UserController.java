@@ -1,6 +1,5 @@
 package com.bridgelabz.spring.controller;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.spring.model.User;
 import com.bridgelabz.spring.service.UserService;
 
-
 @RestController
 public class UserController {
 
@@ -29,7 +27,7 @@ public class UserController {
 				return new ResponseEntity<String>("Successfully Updated",HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<String>("User note found",HttpStatus.CONFLICT);
+			return new ResponseEntity<String>("User not found",HttpStatus.CONFLICT);
 		}
 		return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
 	}

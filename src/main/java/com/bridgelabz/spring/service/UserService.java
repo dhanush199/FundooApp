@@ -6,12 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.bridgelabz.spring.model.User;
 
 public interface UserService {
-	public boolean register(User user, HttpServletRequest request);
+	 boolean register(User user, HttpServletRequest request);
 
-	public User loginUser(String emailId, String password, HttpServletRequest request);
+	 User loginUser(String emailId, String password, HttpServletRequest request);
 
-	public User updateUser(int id, User user, HttpServletRequest request);
+	 User updateUser(int id, User user, HttpServletRequest request);
 
-	public User deleteUser(int id, HttpServletRequest request);
-
+	 User deleteUser(int id, HttpServletRequest request);
 }
