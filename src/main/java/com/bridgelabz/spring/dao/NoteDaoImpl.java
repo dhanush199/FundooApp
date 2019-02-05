@@ -1,55 +1,72 @@
 package com.bridgelabz.spring.dao;
 
+
 import java.util.List;
 
-import com.bridgelabz.spring.model.Note;
-import com.bridgelabz.spring.model.User;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
+import com.bridgelabz.spring.model.Note;
+
+@Repository
 public class NoteDaoImpl implements NoteDao{
 
-	public int register(User user) {
-		return 0;
-	}
+    @Autowired
+    private SessionFactory sessionFactory;
+   
+    public int createNote(Note user) {
+        int userId = 0;
+        Session session = sessionFactory.getCurrentSession();
+        userId = (Integer) session.save(user);
+        return userId;
+    }
 
-	public Note loginUser(String emailId, String password) {
-		return null;
-	}
 
-	public Note getUserById(int id) {
-		return null;
-	}
+    public Note updateNote(int id, Note user) {
+             Session session=sessionFactory.openSession();
+             Transaction tx=session.beginTransaction();
+             session.update(user);
+             tx.commit();
+             session.close();
+            return user;
+           
+            }
+   
+   
+    public Note getNoteByID(int id) {
+         Session session = sessionFactory.openSession();
+            Transaction tx = session.beginTransaction();
+            Query  query = session.createQuery("from Note where id= :id");
+             query.setInteger("id", id);
+             Note emp = (Note) query.uniqueResult();
+            if(user!=null) {
+            System.out.println("Note details is="+ emp.getId() + emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
+            tx.commit();
+            session.close();
+        }
+            return emp;
+    }
 
-	public void updateUser(int id, User user) {
-		
-	}
+    public void deleteNote(int id) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("DELETE from Note u where u.id= :id");
+        query.setInteger("id", id);
+        query.executeUpdate();
+        tx.commit();
+        session.close();
+    }
 
-	public void deleteUser(int id) {
-		
-	}
-
-	public Note getNoteByID(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void updateNote(int id, Note user12) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void deleteNote(int id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public List<Note> retrieve() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int createNote(Note user) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+    public List<Note> retrieve() {
+        Session session = sessionFactory.openSession();
+        String hqlQuery = "from Note";
+        List<Note> listOfNote = session.createQuery(hqlQuery).list();
+        return listOfNote;
+    }
+   
+   
 }

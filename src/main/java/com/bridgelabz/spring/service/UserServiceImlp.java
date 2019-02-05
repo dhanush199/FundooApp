@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.bridgelabz.spring.dao.UserDao;
 import com.bridgelabz.spring.model.User;
+import com.bridgelabz.spring.utility.EmailUtil;
 import com.bridgelabz.spring.utility.TokenGenerator;
 
 @Service
@@ -15,7 +16,10 @@ public class UserServiceImlp implements UserService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
+	@Autowired
+	private EmailUtil email;
+
 	@Autowired
 	private TokenGenerator tokenGenerator;
 
@@ -25,14 +29,16 @@ public class UserServiceImlp implements UserService {
 		if (id > 0) {
 			String token = tokenGenerator.generateToken(String.valueOf(id));
 			System.out.println(token);
+			String verificationLink="http://localhost:8080/FundooNote/verify/"+token;
+			email.sendEmail("Please click on the link to activate FundooNote", "Verification Mail", verificationLink);
 			return true;
 		}
 		return false;
 	}
 
 	@Transactional
-	public User loginUser(String emailId, String password, HttpServletRequest request) {
-		return userDao.loginUser(emailId, password);
+	public User loginUser(String emailId,  HttpServletRequest request) {
+		return userDao.loginUser(emailId);
 	}
 
 	@Transactional
@@ -55,5 +61,4 @@ public class UserServiceImlp implements UserService {
 		}
 		return user2;
 	}
-
 }

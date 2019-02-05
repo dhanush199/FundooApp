@@ -15,7 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name="Note")
 public class Note implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue

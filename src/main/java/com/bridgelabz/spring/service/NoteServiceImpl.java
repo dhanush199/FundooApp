@@ -11,6 +11,7 @@ import com.bridgelabz.spring.dao.NoteDao;
 import com.bridgelabz.spring.model.Note;
 
 @Service
+
 public class NoteServiceImpl implements NoteService {
 
    

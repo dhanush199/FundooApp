@@ -6,7 +6,7 @@ public interface UserDao {
 
 	 int register(User user);
 
-	 User loginUser(String emailId, String password);
+	 User loginUser(String emailId);
 
 	 User getUserById(int id);
 

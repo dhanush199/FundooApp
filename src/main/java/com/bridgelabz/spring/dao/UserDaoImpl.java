@@ -20,12 +20,11 @@ public class UserDaoImpl implements UserDao {
 		return userId;
 	}
 
-	public User loginUser(String emailId, String password) {
+	public User loginUser(String emailId) {
 
 		Session session = sessionFactory.openSession();
-		Query query = session.createQuery("from User where emailId= :emailId and password =:password");
+		Query query = session.createQuery("from User where emailId= :emailId ");
 		query.setString("emailId", emailId);
-		query.setString("password", password);
 		User user = (User) query.uniqueResult();
 		if (user != null) {
 			System.out.println("User detail is=" + user.getId() + "," + user.getName() + "," + user.getEmailId() + ","
