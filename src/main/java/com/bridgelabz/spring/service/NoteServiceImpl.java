@@ -12,7 +12,7 @@ import com.bridgelabz.spring.model.Note;
 
 @Service
 
-public class NoteServiceImpl implements NoteService {
+public class NoteServiceImpl implements NoteServiceInf {
 
    
     @Autowired

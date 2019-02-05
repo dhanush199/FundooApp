@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.bridgelabz.spring.model.Note;
 
-	public interface NoteService {
+	public interface NoteServiceInf {
 		   
 	    boolean createNote(Note user, HttpServletRequest request);
 	   

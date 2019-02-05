@@ -1,5 +1,7 @@
 package com.bridgelabz.spring.dao;
 
+import javax.transaction.Transaction;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,11 +22,12 @@ public class UserDaoImpl implements UserDao {
 		return userId;
 	}
 
-	public User loginUser(String emailId) {
+	public User loginUser(String emailId ){
 
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from User where emailId= :emailId ");
 		query.setString("emailId", emailId);
+//		query.setString("password", password);
 		User user = (User) query.uniqueResult();
 		if (user != null) {
 			System.out.println("User detail is=" + user.getId() + "," + user.getName() + "," + user.getEmailId() + ","
@@ -55,7 +58,9 @@ public class UserDaoImpl implements UserDao {
 
 	public void updateUser(int id, User user) {
 		Session session = sessionFactory.openSession();
+		org.hibernate.Transaction tr=session.beginTransaction();
 		session.update(user);
+		tr.commit();
 		session.close();
 	}
 

@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.spring.model.Note;
-import com.bridgelabz.spring.service.NoteService;
+import com.bridgelabz.spring.service.NoteServiceInf;
 
 @RestController
 public class NoteController {
 
 
 	@Autowired
-	private NoteService noteService;
+	private NoteServiceInf noteService;
 
 	@RequestMapping(value = "/createnote", method = RequestMethod.POST)
 	public ResponseEntity<?> registerNote(@RequestBody Note note, HttpServletRequest request) {

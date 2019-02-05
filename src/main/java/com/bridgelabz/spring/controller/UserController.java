@@ -5,20 +5,24 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bridgelabz.spring.dao.UserDao;
 import com.bridgelabz.spring.model.User;
-import com.bridgelabz.spring.service.UserService;
+import com.bridgelabz.spring.service.UserServiceInf;
+import com.bridgelabz.spring.utility.TokenGeneratorImpl;
 
 @RestController
 public class UserController {
 
 	@Autowired
-	private UserService userService;
+	private UserServiceInf userService;
+	
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user, HttpServletRequest request) {
@@ -34,9 +38,9 @@ public class UserController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> loginUser(@RequestParam("emailId") String emailId,
-			/*@RequestParam("password") String password*/ HttpServletRequest request) {
+			@RequestParam("password") String password, HttpServletRequest request) {
 
-		User user = userService.loginUser(emailId/*password*/, request);
+		User user = userService.loginUser(emailId,password, request);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
@@ -61,6 +65,19 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@RequestParam("id") int id, HttpServletRequest request) {
 
 		User user = userService.deleteUser(id, request);
+		if (user != null) {
+			return new ResponseEntity<User>(user, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<String>("Email incorrect. Please enter valid email address present in database",
+					HttpStatus.NOT_FOUND);
+		}
+	}
+	//////////////////
+	
+	@RequestMapping(value = "/verify/{token:.+}", method = RequestMethod.GET)
+	public ResponseEntity<?> deleteUser(@PathVariable("token") String token, HttpServletRequest request) {
+
+		User user = userService.activateUser(token, request);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
