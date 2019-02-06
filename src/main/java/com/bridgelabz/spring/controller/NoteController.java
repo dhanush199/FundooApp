@@ -19,19 +19,18 @@ import com.bridgelabz.spring.service.NoteServiceInf;
 @RestController
 public class NoteController {
 
-
 	@Autowired
 	private NoteServiceInf noteService;
 
 	@RequestMapping(value = "/createnote", method = RequestMethod.POST)
-	public ResponseEntity<?> registerNote(@RequestBody Note note, HttpServletRequest request) {
+	public ResponseEntity<?> registerNote(@RequestParam ("id") int id,@RequestBody Note note, HttpServletRequest request) {
 		//try {
-			if (noteService.createNote(note, request))
-				return new ResponseEntity<String>("Note Succesfully Created",HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<String>("Details are not proper",HttpStatus.CONFLICT);
-//		}
+		if (noteService.createNote(id,note, request))
+			return new ResponseEntity<String>("Note Succesfully Created",HttpStatus.OK);
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//			return new ResponseEntity<String>("Details are not proper",HttpStatus.CONFLICT);
+		//		}
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
 
@@ -64,13 +63,12 @@ public class NoteController {
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
 	@RequestMapping(value = "/retrieve", method = RequestMethod.GET)
-	public ResponseEntity<?> createNote(HttpServletRequest request) {
-		List<Note> listOfNote = noteService.retrieve(request);
+	public ResponseEntity<?> createNote(@RequestParam("user_Id") int user_Id,HttpServletRequest request) {
+		List<Note> listOfNote = noteService.retrieve(user_Id,request);
 		if (!listOfNote.isEmpty()) {
 			return new ResponseEntity<List<Note>>(listOfNote, HttpStatus.FOUND);
 		} else {
-			return new ResponseEntity<String>("Email incorrect. Please enter valid email address present in database",
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<String>("invalid user ID",HttpStatus.NOT_FOUND);
 		}
 	}
 

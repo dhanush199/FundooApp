@@ -1,6 +1,7 @@
 package com.bridgelabz.spring.service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,10 @@ public class UserServiceImlp implements UserServiceInf {
 
 	@Autowired
 	private TokenGeneratorInf tokenGenerator;
+	
+	   
 	@Autowired
     private PasswordEncoder bcryptEncoder;
-
 
 	@Transactional
 	public boolean register(User user, HttpServletRequest request) {
@@ -37,17 +39,16 @@ public class UserServiceImlp implements UserServiceInf {
 			String url2=url.substring(0, url.lastIndexOf("/"));
 			url2=url2+"/verify/"+token;
 			System.out.println(token);
-			email.sendEmail("", "click here Verification Mail", url2);
+			email.sendEmail("", "Verification Mail", url2);
 			return true;
 		}
 		return false;
 	}
 
 	@Transactional
-	public User loginUser(String emailId, String password,HttpServletRequest request) {
-		
-
-		 User details = userDao.loginUser(emailId);
+	public User loginUser(String emailId, String password,HttpServletRequest request,HttpServletResponse resp) {
+	
+		 User details = userDao.loginUser(emailId,resp);
 		       if (details != null) {
 		           boolean match=bcryptEncoder.matches(password, details.getPassword());
 		           if(match)
@@ -89,5 +90,4 @@ public class UserServiceImlp implements UserServiceInf {
 	        }
 	        return user;
 	    }
-	
 }

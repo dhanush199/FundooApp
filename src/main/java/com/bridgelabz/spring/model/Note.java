@@ -7,21 +7,22 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name="Note")
+@Table(name="Note1")
 public class Note implements Serializable {
 
 	//private static final long serialVersionUID = 1L;
-
-	@Id
 	@GeneratedValue
+	@Id
 	@Column(name="id")
 	private int id;
-
+	
 	@Column(name="title")
 	private String title;
 
@@ -80,7 +81,6 @@ public class Note implements Serializable {
 		return inTrash;
 	}
 
-
 	public void setInTrash(boolean inTrash) {
 		this.inTrash = inTrash;
 	}
@@ -101,11 +101,23 @@ public class Note implements Serializable {
 		this.createdTime = createdTime;
 	}
 
+	@ManyToOne
+	@JoinColumn(name = "user_Id")
+	private User user_Id;
+	
+	public User getUser_Id() {
+		return user_Id;
+	}
+
+	public void setUser_Id(User user_Id) {
+		this.user_Id = user_Id;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", title=" + title + ", discription=" + discription + ", inTrash=" + inTrash
 				+ ", isPinned=" + isPinned + ", updateTime="+updateTime +",createdTime=" +createdTime +"]";
-
-
 	}
+
+	
 }

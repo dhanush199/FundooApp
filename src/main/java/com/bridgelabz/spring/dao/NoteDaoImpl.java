@@ -15,58 +15,63 @@ import com.bridgelabz.spring.model.Note;
 @Repository
 public class NoteDaoImpl implements NoteDao{
 
-    @Autowired
-    private SessionFactory sessionFactory;
-   
-    public int createNote(Note user) {
-        int userId = 0;
-        Session session = sessionFactory.getCurrentSession();
-        userId = (Integer) session.save(user);
-        return userId;
-    }
+	@Autowired
+	private SessionFactory sessionFactory;
 
+	public int createNote(Note user) {
+		int userId = 0;
+		Session session = sessionFactory.getCurrentSession();
+		userId = (Integer) session.save(user);
+		return userId;
+	}
 
-    public Note updateNote(int id, Note user) {
-             Session session=sessionFactory.openSession();
-             Transaction tx=session.beginTransaction();
-             session.update(user);
-             tx.commit();
-             session.close();
-            return user;
-           
-            }
-   
-   
-    public Note getNoteByID(int id) {
-         Session session = sessionFactory.openSession();
-            Transaction tx = session.beginTransaction();
-            Query  query = session.createQuery("from Note where id= :id");
-             query.setInteger("id", id);
-             Note emp = (Note) query.uniqueResult();
-            if(user!=null) {
-            System.out.println("Note details is="+ emp.getId() + emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
-            tx.commit();
-            session.close();
-        }
-            return emp;
-    }
+	public Note updateNote(int id, Note user) {
+		Session session=sessionFactory.openSession();
+		Transaction tx=session.beginTransaction();
+		session.update(user);
+		tx.commit();
+		session.close();
+		return user;
 
-    public void deleteNote(int id) {
-        Session session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        Query query = session.createQuery("DELETE from Note u where u.id= :id");
-        query.setInteger("id", id);
-        query.executeUpdate();
-        tx.commit();
-        session.close();
-    }
+	}
 
-    public List<Note> retrieve() {
-        Session session = sessionFactory.openSession();
-        String hqlQuery = "from Note";
-        List<Note> listOfNote = session.createQuery(hqlQuery).list();
-        return listOfNote;
-    }
-   
-   
+	public Note getNoteByID(int id) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Query  query = session.createQuery("from Note where id= :id");
+		query.setInteger("id", id);
+		Note emp = (Note) query.uniqueResult();
+		if(user!=null) {
+			System.out.println("Note details is="+ emp.getId() + emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
+			tx.commit();
+			session.close();
+		}
+		return emp;
+	}
+
+	public void deleteNote(int id) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session.createQuery("DELETE from Note u where u.id= :id");
+		query.setInteger("id", id);
+		query.executeUpdate();
+		tx.commit();
+		session.close();
+	}
+//
+//	public List<Note> retrieve() {
+//		Session session = sessionFactory.openSession();
+//		String hqlQuery = "from Note";
+//		List<Note> listOfNote = session.createQuery(hqlQuery).list();
+//		return listOfNote;
+//	}
+
+	public List<Note> retrieve(int user_Id) {
+		Session session = sessionFactory.openSession();
+		Query query = session.createQuery("from Note where user_Id= :user_Id");
+		query.setInteger("user_Id", user_Id);
+		List<Note> listOfNote = query.list();
+		return listOfNote;
+	}
+
 }

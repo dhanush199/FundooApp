@@ -1,6 +1,5 @@
 package com.bridgelabz.spring.utility;
 
-
 import java.util.Date;
 
 import javax.xml.bind.DatatypeConverter;
@@ -19,7 +18,6 @@ public class TokenGeneratorImpl implements TokenGeneratorInf {
 				.signWith(SignatureAlgorithm.HS256, "secretKey").compact();
 	}
 
-	
 	public int authenticateToken(String token)
 	{
 		Claims claims = Jwts.parser()        

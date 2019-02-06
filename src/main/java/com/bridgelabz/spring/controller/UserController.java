@@ -1,6 +1,7 @@
 package com.bridgelabz.spring.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,39 +13,36 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgelabz.spring.dao.UserDao;
 import com.bridgelabz.spring.model.User;
 import com.bridgelabz.spring.service.UserServiceInf;
-import com.bridgelabz.spring.utility.TokenGeneratorImpl;
 
 @RestController
 public class UserController {
 
 	@Autowired
 	private UserServiceInf userService;
-	
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user, HttpServletRequest request) {
-		try {
+	//	try {
 			if (userService.register(user, request))
 				return new ResponseEntity<String>("Successfully Updated",HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<String>("User not found",HttpStatus.CONFLICT);
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<String>("User not found",HttpStatus.CONFLICT);
+//		}
 		return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ResponseEntity<?> loginUser(@RequestParam("emailId") String emailId,
-			@RequestParam("password") String password, HttpServletRequest request) {
+			@RequestParam("password") String password, HttpServletRequest request,HttpServletResponse resp) {
 
-		User user = userService.loginUser(emailId,password, request);
+		User user = userService.loginUser(emailId,password,request,resp);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
-			return new ResponseEntity<String>("Incorrect emailId or password", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<String>("Incorrect emailId or password or Your Account is not Activated(Please activate from your registered mai)", HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -73,7 +71,7 @@ public class UserController {
 		}
 	}
 	//////////////////
-	
+
 	@RequestMapping(value = "/verify/{token:.+}", method = RequestMethod.GET)
 	public ResponseEntity<?> deleteUser(@PathVariable("token") String token, HttpServletRequest request) {
 
