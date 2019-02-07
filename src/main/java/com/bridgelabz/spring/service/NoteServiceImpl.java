@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.spring.dao.NoteDao;
 import com.bridgelabz.spring.dao.UserDao;
+import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
 import com.bridgelabz.spring.model.User;
+import com.bridgelabz.spring.utility.TokenGeneratorInf;
 
 @Service
 public class NoteServiceImpl implements NoteServiceInf {
@@ -58,4 +60,58 @@ public class NoteServiceImpl implements NoteServiceInf {
 		}
 		return null;
 	}
+	@Transactional
+	public boolean createLabel(int id,Label label, HttpServletRequest request){
+		User user1=userDao.getUserById(id);
+		if(user1 !=null) {
+		label.setUserId(user1);
+		int id1 = noteDao.createLabel(label);
+		if (id1 > 0) {
+			return true;
+		}}
+		return false;
+	}
+	
+	@Transactional
+	public Label  deleteLabel(int id, HttpServletRequest request) {
+		Label user12=noteDao.getLabelByID(id);
+		noteDao.deleteLabel(id);
+		return user12;
+	}
+	@Transactional
+	public Label editLabel(int id,Label label,HttpServletRequest req)
+	{
+		Label label1=noteDao.getLabelByID(id);
+		if(label1!=null) {
+			label1.setLabelName(label.getLabelName());
+			noteDao.editLabel(id, label1);
+		}
+		return label1;}
+	@Transactional
+	public List<Label> retrieveLabel(int id,HttpServletRequest request) {
+		List<Label> listOfNote = noteDao.retrieveLabel(id);
+		if (!listOfNote.isEmpty()) {
+			return listOfNote;
+		}
+		return null;
+	}
+	@Autowired
+	private TokenGeneratorInf tokenGenerator;
+	@Transactional
+    public boolean mapNoteToLabel(String token, int noteId, int labelId, HttpServletRequest request) {
+        int id = tokenGenerator.authenticateToken(token);
+        User user = userDao.getUserById(id);
+        if (user != null) {
+            Note note = noteDao.getNoteByID(noteId);
+            Label label = noteDao.getLabelByID(labelId);
+            List<Label> listOfLabel = note.getLabelList();
+            listOfLabel.add(label);
+            if (!listOfLabel.isEmpty()) {
+                note.setLabelList(listOfLabel);
+                noteDao.updateNote(1, note);
+                return true;
+            }
+        }
+        return false;
+    }
 }

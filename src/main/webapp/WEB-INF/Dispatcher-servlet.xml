@@ -49,6 +49,7 @@
             <list>
                 <value>com.bridgelabz.spring.model.User</value>
                 <value>com.bridgelabz.spring.model.Note</value>
+                <value>com.bridgelabz.spring.model.Label</value>
             </list>
         </property>
         <property name="hibernateProperties">

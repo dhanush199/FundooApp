@@ -21,9 +21,31 @@ public class User implements Serializable {
 	@GeneratedValue
 	@Column(name = "id")
 	private int id;
+	//////////////////////////
+	
 	@OneToMany(mappedBy = "user_Id")
 	@JsonIgnore
 	private List<Note> note;
+	/////////////////////
+	
+	@OneToMany(mappedBy = "userId")
+	@JsonIgnore
+	private List<Label> label;
+	public List<Note> getNote() {
+		return note;
+	}
+
+	public void setNote(List<Note> note) {
+		this.note = note;
+	}
+
+	public List<Label> getLabel() {
+		return label;
+	}
+
+	public void setLabel(List<Label> label) {
+		this.label = label;
+	}
 
 	@Column(name = "name")
 	private String name;

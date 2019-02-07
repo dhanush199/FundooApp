@@ -72,6 +72,7 @@ public class UserDaoImpl implements UserDao {
 			session.close();
 			return user;
 		} else {
+			session.close();
 			return null;
 		}
 	}

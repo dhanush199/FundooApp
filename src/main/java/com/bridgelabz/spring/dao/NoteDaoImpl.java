@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
 
 @Repository
@@ -46,14 +47,15 @@ public class NoteDaoImpl implements NoteDao{
 			tx.commit();
 			session.close();
 		}
+		session.close();
 		return emp;
 	}
 
 	public void deleteNote(int id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("DELETE from Note u where u.id= :id");
-		query.setInteger("id", id);
+		Query query = session.createQuery("DELETE from Note u where u.noteId= :noteId");
+		query.setInteger("noteId", id);
 		query.executeUpdate();
 		tx.commit();
 		session.close();
@@ -71,6 +73,51 @@ public class NoteDaoImpl implements NoteDao{
 		Query query = session.createQuery("from Note where user_Id= :user_Id");
 		query.setInteger("user_Id", user_Id);
 		List<Note> listOfNote = query.list();
+		return listOfNote;
+	}
+	public int createLabel(Label label) {
+		int labelId = 0;
+		Session session = sessionFactory.getCurrentSession();
+		labelId = (Integer) session.save(label);
+		return labelId;
+	}
+
+	public Label getLabelByID(int id) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Query  query = session.createQuery("from Label where id= :id");
+		query.setInteger("id", id);
+		Label label = (Label) query.uniqueResult();
+		if(user!=null) {
+			System.out.println("Label details is="+ label.getLabelId() + label.getLabelName() );
+			tx.commit();
+			session.close();
+		}
+		session.close();
+		return label;
+	}
+	public void deleteLabel(int id) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session.createQuery("DELETE from Label u where u.labelId= :labelId");
+		query.setInteger("labelId", id);
+		query.executeUpdate();
+		tx.commit();
+		session.close();
+	}
+	public Label editLabel(int id, Label label) {
+		Session session=sessionFactory.openSession();
+		Transaction tx=session.beginTransaction();
+		session.update(label);
+		tx.commit();
+		session.close();
+		return label;
+	}
+	public List<Label> retrieveLabel(int id) {
+		Session session = sessionFactory.openSession();
+		Query query = session.createQuery("from Label where userId= :userId");
+		query.setInteger("userId", id);
+		List<Label> listOfNote = query.list();
 		return listOfNote;
 	}
 

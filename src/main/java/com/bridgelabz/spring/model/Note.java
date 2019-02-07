@@ -2,12 +2,17 @@ package com.bridgelabz.spring.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -21,7 +26,7 @@ public class Note implements Serializable {
 	@GeneratedValue
 	@Id
 	@Column(name="id")
-	private int id;
+	private int noteId;
 	
 	@Column(name="title")
 	private String title;
@@ -39,18 +44,44 @@ public class Note implements Serializable {
 	@UpdateTimestamp
 	private Timestamp updateTime;
 
-
 	@Column(name="createdTime")
 	@UpdateTimestamp
 	private Timestamp createdTime;
 
+	@ManyToMany(fetch=FetchType.EAGER,targetEntity= Label.class,cascade = CascadeType.ALL)
+	@JoinTable(name = "Note_Label", joinColumns = { @JoinColumn(name = "noteId") }, inverseJoinColumns = { @JoinColumn(name = "labelId") })
+	List<Label> labelList;
+	private int labelId;
+	public int getNoteId() {
+		return noteId;
+	}
+
+	public void setNoteId(int noteId) {
+		this.noteId = noteId;
+	}
+
+	public int getLabelId() {
+		return labelId;
+	}
+
+	public void setLabelId(int labelId) {
+		this.labelId = labelId;
+	}
+
+	public List<Label> getLabelList() {
+		return labelList;
+	}
+
+	public void setLabelList(List<Label> labelList) {
+		this.labelList = labelList;
+	}
 
 	public int getId() {
-		return id;
+		return noteId;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.noteId = id;
 	}
 
 	public String getTitle() {
@@ -115,7 +146,7 @@ public class Note implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", title=" + title + ", discription=" + discription + ", inTrash=" + inTrash
+		return "User [id=" + noteId + ", title=" + title + ", discription=" + discription + ", inTrash=" + inTrash
 				+ ", isPinned=" + isPinned + ", updateTime="+updateTime +",createdTime=" +createdTime +"]";
 	}
 
