@@ -19,8 +19,6 @@ import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
 import com.bridgelabz.spring.service.NoteServiceInf;
 
-
-
 @RestController
 public class NoteController {
 
@@ -28,10 +26,10 @@ public class NoteController {
 	private NoteServiceInf noteService;
 
 	@RequestMapping(value = "/createnote", method = RequestMethod.POST)
-	public ResponseEntity<?> registerNote(@RequestHeader ("token") String token,@RequestParam ("id") int id,@RequestBody Note note, HttpServletRequest request,HttpServletResponse response) {
+	public ResponseEntity<?> createNote(@RequestHeader ("token") String token,@RequestParam ("id") int user_Id,@RequestBody Note note, HttpServletRequest request,HttpServletResponse response) {
 		//try {
 		response.setHeader("token", token);
-		if (noteService.createNote(id,note, request))
+		if (noteService.createNote(user_Id,note, request))
 			return new ResponseEntity<String>("Note Succesfully Created",HttpStatus.OK);
 		//		} catch (Exception e) {
 		//			e.printStackTrace();
@@ -40,7 +38,7 @@ public class NoteController {
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
 
-	@RequestMapping(value = "/updatenote", method = RequestMethod.POST)
+	@RequestMapping(value = "/updatenote", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateNote(@RequestParam("id") int id,@RequestBody Note user, HttpServletRequest request)
 	{
 		try {
@@ -52,7 +50,6 @@ public class NoteController {
 		}
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
-
 
 	@RequestMapping(value="/deletenote",method=RequestMethod.DELETE)
 	public ResponseEntity<String> deleteNote(@RequestParam("id") int id ,HttpServletRequest request)
@@ -69,7 +66,7 @@ public class NoteController {
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
 	@RequestMapping(value = "/retrievenote", method = RequestMethod.GET)
-	public ResponseEntity<?> createNote(@RequestParam("user_Id") int user_Id,HttpServletRequest request) {
+	public ResponseEntity<?> retrieveNote(@RequestParam("user_Id") int user_Id,HttpServletRequest request) {
 		List<Note> listOfNote = noteService.retrieve(user_Id,request);
 		if (!listOfNote.isEmpty()) {
 			return new ResponseEntity<List<Note>>(listOfNote, HttpStatus.FOUND);
@@ -78,14 +75,14 @@ public class NoteController {
 		}
 	}
 	@RequestMapping(value = "/createlabel", method = RequestMethod.GET)
-	
+
 	public ResponseEntity<?> createLabel(@RequestParam ("id") int id,@RequestBody Label label, HttpServletRequest request) {
 		try {if(noteService.createLabel(id, label, request))
 			return new ResponseEntity<String>("Label Succesfully Created",HttpStatus.OK);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return new ResponseEntity<String>("Details are not proper",HttpStatus.CONFLICT);
-				}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Details are not proper",HttpStatus.CONFLICT);
+		}
 		return new ResponseEntity<String>("pls provide the proper LabelName",HttpStatus.CONFLICT);
 	}
 	@RequestMapping(value="/deletelabel",method=RequestMethod.DELETE)
@@ -125,15 +122,27 @@ public class NoteController {
 	}
 
 	@RequestMapping(value = "/mergelabel&note", method = RequestMethod.POST)
-	public ResponseEntity<String> mapNoteToLabel(@RequestHeader("token") String token,@RequestParam("noteId") int noteId,@RequestParam("labelId") int labelId,@RequestBody Note user, HttpServletRequest request)
+	public ResponseEntity<String> mapNoteToLabel(@RequestHeader("token") String token,@RequestParam("noteId") int noteId,@RequestParam("labelId") int labelId, HttpServletRequest request)
 	{
 		//try {
-			if (noteService.mapNoteToLabel(token,noteId,labelId, request))
-				return new ResponseEntity<String>("Mapped Succesfully",HttpStatus.OK);
+		if (noteService.mapNoteToLabel(token,noteId,labelId, request))
+			return new ResponseEntity<String>("Mapped Succesfully",HttpStatus.OK);
 		//} catch (Exception e) {
 		//	e.printStackTrace();
 		//	return new ResponseEntity<String>("Note not Found by given  Id",HttpStatus.CONFLICT);
-	//	}
+		//	}
 		return new ResponseEntity<String>("pls provide details correctly",HttpStatus.CONFLICT);
 	}
+
+	@RequestMapping(value = "/deletenote&label", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteNoteLabel(@RequestHeader("token") String token,@RequestParam("noteId") int noteId,@RequestParam("labelId") int labelId, HttpServletRequest request) {
+		if(noteService.removeNoteLabel(token,noteId,labelId,request))
+		{
+			//return new ResponseEntity<List<Label>>(listOfNote, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<String>("invalid note/label ID",HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<String>("invalid note/label ID",HttpStatus.NOT_FOUND);
+	}
+
 }

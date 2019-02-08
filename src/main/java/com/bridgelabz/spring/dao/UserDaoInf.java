@@ -1,14 +1,15 @@
 package com.bridgelabz.spring.dao;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.bridgelabz.spring.model.User;
 
-public interface UserDao {
+public interface UserDaoInf {
 
 	 int register(User user);
 
-	 User loginUser(String emailId,HttpServletResponse resp);
+	 User loginUser(User user,HttpServletRequest req,HttpServletResponse resp);
 
 	 User getUserById(int id);
 

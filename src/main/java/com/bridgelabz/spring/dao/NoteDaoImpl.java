@@ -33,7 +33,6 @@ public class NoteDaoImpl implements NoteDao{
 		tx.commit();
 		session.close();
 		return user;
-
 	}
 
 	public Note getNoteByID(int id) {
@@ -43,7 +42,7 @@ public class NoteDaoImpl implements NoteDao{
 		query.setInteger("id", id);
 		Note emp = (Note) query.uniqueResult();
 		if(user!=null) {
-			System.out.println("Note details is="+ emp.getId() + emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
+			System.out.println("Note details is="+ emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
 			tx.commit();
 			session.close();
 		}
@@ -60,13 +59,6 @@ public class NoteDaoImpl implements NoteDao{
 		tx.commit();
 		session.close();
 	}
-//
-//	public List<Note> retrieve() {
-//		Session session = sessionFactory.openSession();
-//		String hqlQuery = "from Note";
-//		List<Note> listOfNote = session.createQuery(hqlQuery).list();
-//		return listOfNote;
-//	}
 
 	public List<Note> retrieve(int user_Id) {
 		Session session = sessionFactory.openSession();

@@ -26,6 +26,9 @@ public interface NoteServiceInf {
 	List<Label> retrieveLabel(int id,HttpServletRequest request);
 	
 	boolean mapNoteToLabel(String token, int noteId, int labelId, HttpServletRequest request);
+	
+	boolean removeNoteLabel(String token, int noteId, int labelId, HttpServletRequest request);
+
 }
 
 

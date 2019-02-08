@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bridgelabz.spring.dao.UserDao;
+import com.bridgelabz.spring.dao.UserDaoInf;
 import com.bridgelabz.spring.model.User;
 import com.bridgelabz.spring.utility.EmailUtil;
 import com.bridgelabz.spring.utility.TokenGeneratorInf;
@@ -17,17 +17,29 @@ import com.bridgelabz.spring.utility.TokenGeneratorInf;
 public class UserServiceImlp implements UserServiceInf {
 
 	@Autowired
-	private UserDao userDao;
+	private UserDaoInf userDao;
 
 	@Autowired
 	private EmailUtil email;
 
 	@Autowired
 	private TokenGeneratorInf tokenGenerator;
-	
-	   
+
+
 	@Autowired
-    private PasswordEncoder bcryptEncoder;
+	private PasswordEncoder bcryptEncoder;
+	
+	@Transactional
+	public User updateUser(int id, User user, HttpServletRequest request) {
+		User existingUser = userDao.getUserById(id);
+		if (existingUser != null) {
+			existingUser.setMobileNumber(user.getMobileNumber());
+			existingUser.setName(user.getName());
+			existingUser.setPassword(user.getPassword());
+			userDao.updateUser(id, existingUser);
+		}
+		return existingUser;
+	}
 
 	@Transactional
 	public boolean register(User user, HttpServletRequest request) {
@@ -46,48 +58,36 @@ public class UserServiceImlp implements UserServiceInf {
 	}
 
 	@Transactional
-	public User loginUser(String emailId, String password,HttpServletRequest request,HttpServletResponse resp) {
-	
-		 User details = userDao.loginUser(emailId,resp);
-		       if (details != null) {
-		           boolean match=bcryptEncoder.matches(password, details.getPassword());
-		           if(match)
-		               return details;
-		       }
-		       return null;
+	public User loginUser(User user,HttpServletRequest request,HttpServletResponse resp) {
 
+		User existingUser = userDao.loginUser(user,request,resp);
+		if (existingUser != null) {
+			boolean match=bcryptEncoder.matches(user.getPassword(), existingUser.getPassword());
+			if(match)
+				return existingUser;
 		}
-
-	@Transactional
-	public User updateUser(int id, User user, HttpServletRequest request) {
-		User user2 = userDao.getUserById(id);
-		if (user2 != null) {
-			user2.setMobileNumber(user.getMobileNumber());
-			user2.setName(user.getName());
-			user2.setPassword(user.getPassword());
-			userDao.updateUser(id, user2);
-		}
-		return user2;
+		return null;
 	}
 
 	@Transactional
 	public User deleteUser(int id, HttpServletRequest request) {
-		User user2 = userDao.getUserById(id);
-		if (user2 != null) {
+		User existingUser = userDao.getUserById(id);
+		if (existingUser != null) {
 			userDao.deleteUser(id);
 		}
-		return user2;
+		return existingUser;
 	}
-	
+
 	@Transactional
-	  public User activateUser(String token, HttpServletRequest request) {
-	        int id=tokenGenerator.authenticateToken(token);
-	        User user=userDao.getUserById(id);
-	        if(user!=null)
-	        {
-	            user.setActivationStatus(true);
-	            userDao.updateUser(id, user);
-	        }
-	        return user;
-	    }
+	public User activateUser(String token, HttpServletRequest request) {
+		int id=tokenGenerator.authenticateToken(token);
+		User exsistingUser=userDao.getUserById(id);
+		if(exsistingUser!=null)
+		{
+			exsistingUser.setActivationStatus(true);
+			userDao.updateUser(id, exsistingUser);
+		}
+		return exsistingUser;
+	}
+
 }

@@ -9,8 +9,9 @@ import com.bridgelabz.spring.model.User;
 public interface UserServiceInf {
 	 boolean register(User user, HttpServletRequest request);
 
-	 User loginUser(String emailId, String password, HttpServletRequest req,HttpServletResponse resp);
-	 User updateUser(int id, User user, HttpServletRequest request);
+	 User loginUser(User user, HttpServletRequest req,HttpServletResponse resp);
+	
+	User updateUser(int id, User user, HttpServletRequest request);
 
 	 User deleteUser(int id, HttpServletRequest request);
 	 

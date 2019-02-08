@@ -18,13 +18,6 @@ public class Label implements Serializable {
 	@Id
 	@Column(name="id")
 	private int labelId;
-	
-	public int getLabelId() {
-		return labelId;
-	}
-	public void setLabelId(int labelId) {
-		this.labelId = labelId;
-	}
 
 	@Column(name = "labelName")
 	private String labelName;
@@ -33,13 +26,19 @@ public class Label implements Serializable {
 	@JoinColumn(name = "userId")
 	private User userId;
 	
+	public int getLabelId() {
+		return labelId;
+	}
+	public void setLabelId(int labelId) {
+		this.labelId = labelId;
+	}
+	
 	public User getUserId() {
 		return userId;
 	}
 	public void setUserId(User userId) {
 		this.userId = userId;
 	}
-
 	
 	public String getLabelName() {
 		return labelName;

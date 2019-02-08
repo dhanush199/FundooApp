@@ -34,13 +34,12 @@ public class UserController {
 		return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ResponseEntity<?> loginUser(@RequestParam("emailId") String emailId,
-			@RequestParam("password") String password, HttpServletRequest request,HttpServletResponse resp) {
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ResponseEntity<?> loginUser(@RequestBody User user, HttpServletRequest request,HttpServletResponse resp) {
 
-		User user = userService.loginUser(emailId,password,request,resp);
-		if (user != null) {
-			return new ResponseEntity<User>(user, HttpStatus.FOUND);
+		User exsistingUser = userService.loginUser(user,request,resp);
+		if (exsistingUser != null) {
+			return new ResponseEntity<User>(exsistingUser, HttpStatus.FOUND);
 		} else {
 			return new ResponseEntity<String>("Incorrect emailId or password or Your Account is not Activated(Please activate from your registered mai)", HttpStatus.NOT_FOUND);
 		}
@@ -70,8 +69,7 @@ public class UserController {
 					HttpStatus.NOT_FOUND);
 		}
 	}
-	//////////////////
-
+	
 	@RequestMapping(value = "/verify/{token:.+}", method = RequestMethod.GET)
 	public ResponseEntity<?> deleteUser(@PathVariable("token") String token, HttpServletRequest request) {
 

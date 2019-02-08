@@ -19,15 +19,29 @@ import javax.persistence.Table;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name="Note1")
+@Table(name="Note")
 public class Note implements Serializable {
 
 	//private static final long serialVersionUID = 1L;
+
+	@ManyToMany(fetch=FetchType.EAGER,targetEntity= Label.class,cascade = CascadeType.ALL)
+	@JoinTable(name = "Note_Label", joinColumns = { @JoinColumn(name = "noteId") }, inverseJoinColumns = { @JoinColumn(name = "labelId") })
+
+	List<Label> labelList;
+	private int labelId;
 	@GeneratedValue
 	@Id
 	@Column(name="id")
-	private int noteId;
-	
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	@Column(name="title")
 	private String title;
 
@@ -48,17 +62,9 @@ public class Note implements Serializable {
 	@UpdateTimestamp
 	private Timestamp createdTime;
 
-	@ManyToMany(fetch=FetchType.EAGER,targetEntity= Label.class,cascade = CascadeType.ALL)
-	@JoinTable(name = "Note_Label", joinColumns = { @JoinColumn(name = "noteId") }, inverseJoinColumns = { @JoinColumn(name = "labelId") })
-	List<Label> labelList;
-	private int labelId;
-	public int getNoteId() {
-		return noteId;
-	}
-
-	public void setNoteId(int noteId) {
-		this.noteId = noteId;
-	}
+	@ManyToOne
+	@JoinColumn(name = "user_Id")
+	private User user_Id;
 
 	public int getLabelId() {
 		return labelId;
@@ -76,13 +82,6 @@ public class Note implements Serializable {
 		this.labelList = labelList;
 	}
 
-	public int getId() {
-		return noteId;
-	}
-
-	public void setId(int id) {
-		this.noteId = id;
-	}
 
 	public String getTitle() {
 		return title;
@@ -132,10 +131,7 @@ public class Note implements Serializable {
 		this.createdTime = createdTime;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "user_Id")
-	private User user_Id;
-	
+
 	public User getUser_Id() {
 		return user_Id;
 	}
@@ -146,9 +142,8 @@ public class Note implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + noteId + ", title=" + title + ", discription=" + discription + ", inTrash=" + inTrash
+		return "User [id=" + id + ", title=" + title + ", discription=" + discription + ", inTrash=" + inTrash
 				+ ", isPinned=" + isPinned + ", updateTime="+updateTime +",createdTime=" +createdTime +"]";
 	}
 
-	
 }
