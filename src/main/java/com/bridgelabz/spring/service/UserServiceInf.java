@@ -7,13 +7,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.bridgelabz.spring.model.User;
 
 public interface UserServiceInf {
-	 boolean register(User user, HttpServletRequest request);
-
-	 User loginUser(User user, HttpServletRequest req,HttpServletResponse resp);
 	
-	User updateUser(int id, User user, HttpServletRequest request);
+	boolean register(User user, HttpServletRequest request,HttpServletResponse resp);
 
-	 User deleteUser(int id, HttpServletRequest request);
-	 
-	 User activateUser(String token, HttpServletRequest request);
+	User loginUser(User user, HttpServletRequest req,HttpServletResponse resp);
+
+	User updateUser(String token, User user, HttpServletRequest request);
+
+	User deleteUser(String token, HttpServletRequest request);
+
+	User activateUser(String token, HttpServletRequest request);
+
+	User getUserByEmail(String token, HttpServletRequest request,User newPassword);
 }

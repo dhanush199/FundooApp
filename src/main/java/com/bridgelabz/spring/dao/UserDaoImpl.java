@@ -23,6 +23,10 @@ public class UserDaoImpl implements UserDaoInf {
 
 	@Autowired
 	private EmailUtil email;
+	
+	//@Autowired
+	//private PasswordEncoder bcryptEncoder;
+
 
 	public int register(User user) {
 		int userId = 0;
@@ -32,13 +36,15 @@ public class UserDaoImpl implements UserDaoInf {
 	}
 
 	public User loginUser(User user,HttpServletRequest req,HttpServletResponse resp){
-
 		Session session = sessionFactory.openSession();
+		//user.setPassword(bcryptDcoder.dencode(user.getPassword()));
+		//String password=user.getPassword();
+		// bcryptEncoder.matches(password, user.getPassword());
 		Query query = session.createQuery("from User where emailId= :emailId ");
 		query.setString("emailId", user.getEmailId());
-		//		query.setString("password", password);
+		//query.setString("password", password);
 		User existingUser = (User) query.uniqueResult();
-		if (existingUser != null ) {
+		if (existingUser != null/* && bcryptEncoder.matches(password, existingUser.getPassword())*/) {
 			if(existingUser.isActivationStatus()==true) {
 				System.out.println("User detail is=" + existingUser.getId() + "," + existingUser.getName() + "," + existingUser.getEmailId() + ","
 						+ existingUser.getMobileNumber());
@@ -48,22 +54,15 @@ public class UserDaoImpl implements UserDaoInf {
 				return existingUser;
 			}
 			else {	
-					StringBuffer url=req.getRequestURL();
-					String url2=url.substring(0, url.lastIndexOf("/"));
-					
-				String token = tokenGenerator.generateToken(String.valueOf(user.getId()));
-				url2=url2+"/verify/"+token;
-				resp.setHeader("userId", token);
-				email.sendEmail("", "Verification Mail", url2);
+				String verificationUrl=tokenGenerator.generateUrl("/verify/", existingUser, req, resp);
+				email.sendEmail("dhanushsh1995@gmail.com", "Verification Mail", verificationUrl);
 				return null;
 			}
-
 		}
 		return null;
 	}
 
 	public User getUserById(int id) {
-
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from User where id= :id");
 		query.setInteger("id", id);
@@ -94,5 +93,22 @@ public class UserDaoImpl implements UserDaoInf {
 		query.executeUpdate();
 		session.close();
 	}
+
+	public User getUserByEmailId(String emailId) {
+		Session session = sessionFactory.openSession();
+		Query query = session.createQuery("from User where emailId= :emailId");
+		query.setString("emailId", emailId);
+		User user = (User) query.uniqueResult();
+		if (user != null) {
+			System.out.println("User detail is=" + user.getId() + "," + user.getName() + "," + user.getEmailId() + ","
+					+ user.getMobileNumber());
+			session.close();
+			return user;
+		} else {
+			session.close();
+			return null;
+		}
+	}
+	
 
 }

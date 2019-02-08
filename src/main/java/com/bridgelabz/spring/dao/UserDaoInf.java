@@ -17,5 +17,6 @@ public interface UserDaoInf {
 
 	 void deleteUser(int id);
 	 
-
+	 User getUserByEmailId(String emailId);
+	 
 }

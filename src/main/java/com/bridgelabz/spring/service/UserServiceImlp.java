@@ -28,9 +28,9 @@ public class UserServiceImlp implements UserServiceInf {
 
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
-	
 	@Transactional
-	public User updateUser(int id, User user, HttpServletRequest request) {
+	public User updateUser(String token, User user, HttpServletRequest request) {
+		int id=tokenGenerator.authenticateToken(token);
 		User existingUser = userDao.getUserById(id);
 		if (existingUser != null) {
 			existingUser.setMobileNumber(user.getMobileNumber());
@@ -42,16 +42,17 @@ public class UserServiceImlp implements UserServiceInf {
 	}
 
 	@Transactional
-	public boolean register(User user, HttpServletRequest request) {
+	public boolean register(User user, HttpServletRequest request,HttpServletResponse resp) {
 		user.setPassword(bcryptEncoder.encode(user.getPassword()));
 		int id = userDao.register(user);
 		if (id > 0) {
-			String token = tokenGenerator.generateToken(String.valueOf(id));
-			StringBuffer url=request.getRequestURL();
-			String url2=url.substring(0, url.lastIndexOf("/"));
-			url2=url2+"/verify/"+token;
-			System.out.println(token);
-			email.sendEmail("", "Verification Mail", url2);
+			String activateStatusUrl=tokenGenerator.generateUrl("/verify/", user, request, resp);
+//			String token = tokenGenerator.generateToken(String.valueOf(id));
+//			StringBuffer url=request.getRequestURL();
+//			String url2=url.substring(0, url.lastIndexOf("/"));
+//			url2=url2+"/verify/"+token;
+			//System.out.println(token);
+			email.sendEmail("", "Verification Mail", activateStatusUrl);
 			return true;
 		}
 		return false;
@@ -70,12 +71,13 @@ public class UserServiceImlp implements UserServiceInf {
 	}
 
 	@Transactional
-	public User deleteUser(int id, HttpServletRequest request) {
-		User existingUser = userDao.getUserById(id);
-		if (existingUser != null) {
+	public User deleteUser(String token, HttpServletRequest request) {
+		int id=tokenGenerator.authenticateToken(token);
+		User aliveUser = userDao.getUserById(id);
+		if (aliveUser != null) {
 			userDao.deleteUser(id);
 		}
-		return existingUser;
+		return aliveUser;
 	}
 
 	@Transactional
@@ -86,6 +88,33 @@ public class UserServiceImlp implements UserServiceInf {
 		{
 			exsistingUser.setActivationStatus(true);
 			userDao.updateUser(id, exsistingUser);
+		}
+		return exsistingUser;
+	}
+	@Transactional
+	public User getUserByEmail( String userToken,HttpServletRequest request,User newPassword) {
+		//int id=tokenGenerator.authenticateToken(userToken);
+		User exsistingUser=userDao.getUserByEmailId(newPassword.getEmailId());
+		if(exsistingUser!=null)
+		{
+			String token = tokenGenerator.generateToken(String.valueOf(exsistingUser.getId()));
+			StringBuffer url=request.getRequestURL();
+			String url2=url.substring(0, url.lastIndexOf("/"));
+			url2=url2+"/resetpassword/"+token;
+			System.out.println(token);
+			email.sendEmail("dhanushsh1995@gmail.com", "Password Reset Link Mail", "please click on this link to reset password "+url2);
+		}
+		exsistingUser.setEmailId("");
+		return exsistingUser;
+	}
+
+	@Transactional
+	public User resetPassword(String emailID, HttpServletRequest request,User newPassword) {
+		User exsistingUser=userDao.getUserByEmailId(emailID);
+		if(exsistingUser!=null)
+		{
+			exsistingUser.setPassword(newPassword.getPassword());
+			userDao.updateUser(exsistingUser.getId(), exsistingUser);
 		}
 		return exsistingUser;
 	}

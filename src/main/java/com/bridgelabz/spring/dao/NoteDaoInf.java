@@ -5,11 +5,11 @@ import java.util.List;
 import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
 
-public interface NoteDao {
+public interface NoteDaoInf {
 
 	Object user = null;
 
-	int createNote(Note user);
+	boolean createNote(Note user);
 
 	Note getNoteByID(int id);
 	

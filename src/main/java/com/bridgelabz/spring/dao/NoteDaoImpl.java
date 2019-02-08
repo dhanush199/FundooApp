@@ -14,16 +14,18 @@ import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
 
 @Repository
-public class NoteDaoImpl implements NoteDao{
+public class NoteDaoImpl implements NoteDaoInf{
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public int createNote(Note user) {
-		int userId = 0;
+	public boolean createNote(Note user) {
+		int isNoteCreated = 0;
 		Session session = sessionFactory.getCurrentSession();
-		userId = (Integer) session.save(user);
-		return userId;
+		isNoteCreated = (Integer) session.save(user);
+		if(isNoteCreated>0)
+			return true;
+		return false;
 	}
 
 	public Note updateNote(int id, Note user) {
@@ -64,6 +66,7 @@ public class NoteDaoImpl implements NoteDao{
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Note where user_Id= :user_Id");
 		query.setInteger("user_Id", user_Id);
+		@SuppressWarnings("unchecked")
 		List<Note> listOfNote = query.list();
 		return listOfNote;
 	}
@@ -109,6 +112,7 @@ public class NoteDaoImpl implements NoteDao{
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from Label where userId= :userId");
 		query.setInteger("userId", id);
+		@SuppressWarnings("unchecked")
 		List<Label> listOfNote = query.list();
 		return listOfNote;
 	}

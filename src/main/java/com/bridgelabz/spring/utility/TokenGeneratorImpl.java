@@ -2,9 +2,13 @@ package com.bridgelabz.spring.utility;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.stereotype.Component;
+
+import com.bridgelabz.spring.model.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +29,15 @@ public class TokenGeneratorImpl implements TokenGeneratorInf {
 				.parseClaimsJws(token).getBody();
 		System.out.println("ID: " + claims.getId());
 		return Integer.parseInt(claims.getId());
+	}
+	
+	public String generateUrl(String joinUrl,User user,HttpServletRequest req,HttpServletResponse resp) {
+		StringBuffer url=req.getRequestURL();
+		String verificationUrl=url.substring(0, url.lastIndexOf("/"));
+		String token = generateToken(String.valueOf(user.getId()));
+		verificationUrl=verificationUrl+joinUrl+token;
+		resp.setHeader("userId", token);
+		return verificationUrl;
 	}
 
 }

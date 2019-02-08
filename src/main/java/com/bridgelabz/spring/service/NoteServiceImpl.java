@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bridgelabz.spring.dao.NoteDao;
+import com.bridgelabz.spring.dao.NoteDaoInf;
 import com.bridgelabz.spring.dao.UserDaoInf;
 import com.bridgelabz.spring.model.Label;
 import com.bridgelabz.spring.model.Note;
@@ -19,20 +19,20 @@ import com.bridgelabz.spring.utility.TokenGeneratorInf;
 public class NoteServiceImpl implements NoteServiceInf {
 
 	@Autowired
-	private NoteDao noteDaoInf;
+	private NoteDaoInf noteDaoInf;
 
 	@Autowired
 	private UserDaoInf userDaoInf;
-	
+
 	@Autowired
 	private TokenGeneratorInf tokenGenerator;
 
 	@Transactional
 	public boolean createNote(int id,Note note, HttpServletRequest request) {
-		User user1=userDaoInf.getUserById(id);
-		int id1 = noteDaoInf.createNote(note);
-		if (id1 > 0) {
-			note.setUser_Id(user1);
+		User existingUser=userDaoInf.getUserById(id);
+		boolean isNoteCreated = noteDaoInf.createNote(note);
+		if (isNoteCreated) {
+			note.setUser_Id(existingUser);
 			return true;
 		}
 		return false;
@@ -41,36 +41,34 @@ public class NoteServiceImpl implements NoteServiceInf {
 	@Transactional
 	public Note updateNote(int id,Note user,HttpServletRequest request)
 	{
-		Note user12=noteDaoInf.getNoteByID(id);
-		if(user12!=null) {
-			user12.setTitle(user.getTitle());
-			user12.setDiscription(user.getDiscription());
-			noteDaoInf.updateNote(id, user12);
+		Note aliveNote=noteDaoInf.getNoteByID(id);
+		if(aliveNote!=null) {
+			aliveNote.setTitle(user.getTitle());
+			aliveNote.setDiscription(user.getDiscription());
+			noteDaoInf.updateNote(id, aliveNote);
 		}
-		return user12;}
+		return aliveNote;}
 
 	@Transactional
 	public Note deleteNote(int id,HttpServletRequest request) {
-		Note user12=noteDaoInf.getNoteByID(id);
+		Note aliveUser=noteDaoInf.getNoteByID(id);
 		noteDaoInf.deleteNote(id);
-		return user12;
+		return aliveUser;
 	}
 
 	@Transactional
 	public List<Note> retrieve(int id,HttpServletRequest request) {
-		List<Note> listOfNote = noteDaoInf.retrieve(id);
-//		Label label=noteDao.getLabelByID(id);
-//		Note note=noteDao.getNoteByID(id);
-		if (!listOfNote.isEmpty()) {
-			return listOfNote;
+		List<Note> Notes = noteDaoInf.retrieve(id);
+		if (!Notes.isEmpty()) {
+			return Notes;
 		}
 		return null;
 	}
 	@Transactional
 	public boolean createLabel(int id,Label label, HttpServletRequest request){
-		User user1=userDaoInf.getUserById(id);
-		if(user1 !=null) {
-			label.setUserId(user1);
+		User residingUser=userDaoInf.getUserById(id);
+		if(residingUser !=null) {
+			label.setUserId(residingUser);
 			int id1 = noteDaoInf.createLabel(label);
 			if (id1 > 0) {
 				return true;
@@ -79,25 +77,25 @@ public class NoteServiceImpl implements NoteServiceInf {
 	}
 
 	@Transactional
-	public Label  deleteLabel(int id, HttpServletRequest request) {
-		Label user12=noteDaoInf.getLabelByID(id);
+	public Label deleteLabel(int id, HttpServletRequest request) {
+		Label aliveLabel=noteDaoInf.getLabelByID(id);
 		noteDaoInf.deleteLabel(id);
-		return user12;
+		return aliveLabel;
 	}
 	@Transactional
 	public Label editLabel(int id,Label label,HttpServletRequest req)
 	{
-		Label label1=noteDaoInf.getLabelByID(id);
-		if(label1!=null) {
-			label1.setLabelName(label.getLabelName());
-			noteDaoInf.editLabel(id, label1);
+		Label aliveLabel=noteDaoInf.getLabelByID(id);
+		if(aliveLabel!=null) {
+			aliveLabel.setLabelName(label.getLabelName());
+			noteDaoInf.editLabel(id, aliveLabel);
 		}
-		return label1;}
+		return aliveLabel;}
 	@Transactional
 	public List<Label> retrieveLabel(int id,HttpServletRequest request) {
-		List<Label> listOfNote = noteDaoInf.retrieveLabel(id);
-		if (!listOfNote.isEmpty()) {
-			return listOfNote;
+		List<Label> notes = noteDaoInf.retrieveLabel(id);
+		if (!notes.isEmpty()) {
+			return notes;
 		}
 		return null;
 	}
@@ -105,14 +103,14 @@ public class NoteServiceImpl implements NoteServiceInf {
 	@Transactional
 	public boolean mapNoteToLabel(String token, int noteId, int labelId, HttpServletRequest request) {
 		int id = tokenGenerator.authenticateToken(token);
-		User user = userDaoInf.getUserById(id);
-		if (user != null) {
+		User existingUser = userDaoInf.getUserById(id);
+		if (existingUser != null) {
 			Note note = noteDaoInf.getNoteByID(noteId);
 			Label label = noteDaoInf.getLabelByID(labelId);
-			List<Label> listOfLabel = note.getLabelList();
-			listOfLabel.add(label);
-			if (!listOfLabel.isEmpty()) {
-				note.setLabelList(listOfLabel);
+			List<Label> labels = note.getLabelList();
+			labels.add(label);
+			if (!labels.isEmpty()) {
+				note.setLabelList(labels);
 				noteDaoInf.updateNote(1, note);
 				return true;
 			}
@@ -120,20 +118,20 @@ public class NoteServiceImpl implements NoteServiceInf {
 		return false;
 	}
 	public boolean removeNoteLabel(String token, int noteId, int labelId, HttpServletRequest request) {
-        int id = tokenGenerator.authenticateToken(token);
-        User user = userDaoInf.getUserById(id);
-        if (user != null) {
-            Note note = noteDaoInf.getNoteByID(noteId);
-            List<Label> listOfLabels = note.getLabelList();
-            if (!listOfLabels.isEmpty()) {
-                listOfLabels = listOfLabels.stream().filter(label -> label.getLabelId() != labelId)
-                        .collect(Collectors.toList());
-                note.setLabelList(listOfLabels);
-                noteDaoInf.updateNote(noteId, note);
-                return true;
-            }
-        }
-        return false;
-    }
+		int id = tokenGenerator.authenticateToken(token);
+		User user = userDaoInf.getUserById(id);
+		if (user != null) {
+			Note residingNote = noteDaoInf.getNoteByID(noteId);
+			List<Label> labels = residingNote.getLabelList();
+			if (!labels.isEmpty()) {
+				labels = labels.stream().filter(label -> label.getLabelId() != labelId)
+						.collect(Collectors.toList());
+				residingNote.setLabelList(labels);
+				noteDaoInf.updateNote(noteId, residingNote);
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

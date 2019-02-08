@@ -20,13 +20,13 @@ public interface NoteServiceInf {
 	boolean createLabel(int id,Label label, HttpServletRequest request);
 
 	Label  deleteLabel(int id, HttpServletRequest request);
-	
+
 	Label editLabel(int id,Label label,HttpServletRequest req);
-	
+
 	List<Label> retrieveLabel(int id,HttpServletRequest request);
-	
+
 	boolean mapNoteToLabel(String token, int noteId, int labelId, HttpServletRequest request);
-	
+
 	boolean removeNoteLabel(String token, int noteId, int labelId, HttpServletRequest request);
 
 }

@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.spring.model.User;
@@ -23,15 +23,11 @@ public class UserController {
 	private UserServiceInf userService;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<?> registerUser(@RequestBody User user, HttpServletRequest request) {
-	//	try {
-			if (userService.register(user, request))
-				return new ResponseEntity<String>("Successfully Updated",HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<String>("User not found",HttpStatus.CONFLICT);
-//		}
-		return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
+	public ResponseEntity<?> registerUser(@RequestBody User user, HttpServletRequest request,HttpServletResponse resp) {
+		if (userService.register(user, request,resp))
+			return new ResponseEntity<String>("Successfully Updated",HttpStatus.OK);
+		else
+			return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -45,11 +41,11 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public ResponseEntity<?> updateUser(@RequestParam("id") int id, @RequestBody User user,
+	@RequestMapping(value = "/update", method = RequestMethod.PUT)
+	public ResponseEntity<?> updateUser(@RequestHeader("token") String token, @RequestBody User user,
 			HttpServletRequest request) {
 
-		User user2 = userService.updateUser(id, user, request);
+		User user2 = userService.updateUser(token, user, request);
 		if (user2 != null) {
 			return new ResponseEntity<User>(user2, HttpStatus.FOUND);
 		} else {
@@ -59,9 +55,9 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteUser(@RequestParam("id") int id, HttpServletRequest request) {
+	public ResponseEntity<?> deleteUser(@RequestHeader("token") String token, HttpServletRequest request) {
 
-		User user = userService.deleteUser(id, request);
+		User user = userService.deleteUser(token, request);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
@@ -69,11 +65,34 @@ public class UserController {
 					HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	@RequestMapping(value = "/verify/{token:.+}", method = RequestMethod.GET)
-	public ResponseEntity<?> deleteUser(@PathVariable("token") String token, HttpServletRequest request) {
+	public ResponseEntity<?> activateUser(@PathVariable("token") String token, HttpServletRequest request) {
 
 		User user = userService.activateUser(token, request);
+		if (user != null) {
+			return new ResponseEntity<User>(user, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<String>("Email incorrect. Please enter valid email address present in database",
+					HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@RequestMapping(value = "/fogotpassword", method = RequestMethod.POST)
+	public ResponseEntity<?> fogotPassword(@PathVariable("token") String token,@RequestBody User newPassword, HttpServletRequest request) {
+
+		User user = userService.getUserByEmail(token, request,newPassword);
+		if (user != null) {
+			return new ResponseEntity<User>(user, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<String>("Email incorrect. Please enter valid email address present in database",
+					HttpStatus.NOT_FOUND);
+		}
+	}
+	@RequestMapping(value = "/resetpassword/{token:.+}", method = RequestMethod.POST)
+	public ResponseEntity<?> resetPassword(@PathVariable("token") String token,@RequestBody User newPassword, HttpServletRequest request) {
+
+		User user = userService.getUserByEmail(token,request,newPassword);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {

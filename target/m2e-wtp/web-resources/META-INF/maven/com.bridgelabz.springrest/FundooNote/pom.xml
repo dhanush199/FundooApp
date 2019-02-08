@@ -141,6 +141,7 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>4.2.10.RELEASE</version>
 		</dependency>
+	
 
 	</dependencies>
 
