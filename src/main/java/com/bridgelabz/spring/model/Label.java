@@ -14,6 +14,11 @@ import javax.persistence.Entity;
 @Table(name = "Label")
 public class Label implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 144445L;
+
 	@GeneratedValue
 	@Id
 	@Column(name="id")

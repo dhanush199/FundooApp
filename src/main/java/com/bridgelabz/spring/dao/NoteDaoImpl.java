@@ -1,6 +1,5 @@
 package com.bridgelabz.spring.dao;
 
-
 import java.util.List;
 
 import org.hibernate.Query;
@@ -37,26 +36,27 @@ public class NoteDaoImpl implements NoteDaoInf{
 		return user;
 	}
 
-	public Note getNoteByID(int id) {
+	public Note getNoteByUserID(int id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Query  query = session.createQuery("from Note where id= :id");
-		query.setInteger("id", id);
-		Note emp = (Note) query.uniqueResult();
-		if(user!=null) {
-			System.out.println("Note details is="+ emp.getTitle() + emp.getDiscription()  +emp.getCreatedTime()+ emp.getUpdateTime() );
+		Query  query = session.createQuery("from Note where user_Id= :user_Id");
+		query.setInteger("user_Id", id);
+		Note existingNote = (Note) query.uniqueResult();
+		//if(user!=null) {
+		if(existingNote!=null) {
+			System.out.println("Note details is="+ existingNote.getTitle() + existingNote.getDiscription()  +existingNote.getCreatedTime()+ existingNote.getUpdateTime() );
 			tx.commit();
-			session.close();
+			//session.close();
 		}
 		session.close();
-		return emp;
+		return existingNote;
 	}
 
 	public void deleteNote(int id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("DELETE from Note u where u.noteId= :noteId");
-		query.setInteger("noteId", id);
+		Query query = session.createQuery("DELETE from Note u where u.user_Id= :user_Id");
+		query.setInteger("user_Id", id);
 		query.executeUpdate();
 		tx.commit();
 		session.close();
@@ -80,13 +80,14 @@ public class NoteDaoImpl implements NoteDaoInf{
 	public Label getLabelByID(int id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Query  query = session.createQuery("from Label where id= :id");
-		query.setInteger("id", id);
+		Query  query = session.createQuery("from Label where userID= :userID");
+		query.setInteger("userID", id);
 		Label label = (Label) query.uniqueResult();
-		if(user!=null) {
+		//if(user!=null) {
+		if(label!=null) {
 			System.out.println("Label details is="+ label.getLabelId() + label.getLabelName() );
 			tx.commit();
-			session.close();
+		//	session.close();
 		}
 		session.close();
 		return label;
@@ -94,8 +95,8 @@ public class NoteDaoImpl implements NoteDaoInf{
 	public void deleteLabel(int id) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("DELETE from Label u where u.labelId= :labelId");
-		query.setInteger("labelId", id);
+		Query query = session.createQuery("DELETE from Label u where u.userId= :userId");
+		query.setInteger("userId", id);
 		query.executeUpdate();
 		tx.commit();
 		session.close();
@@ -113,8 +114,8 @@ public class NoteDaoImpl implements NoteDaoInf{
 		Query query = session.createQuery("from Label where userId= :userId");
 		query.setInteger("userId", id);
 		@SuppressWarnings("unchecked")
-		List<Label> listOfNote = query.list();
-		return listOfNote;
+		List<Label> labels = query.list();
+		return labels;
 	}
 
 }

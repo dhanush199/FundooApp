@@ -1,6 +1,5 @@
 package com.bridgelabz.spring.utility;
 
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -8,7 +7,7 @@ import org.springframework.validation.Validator;
 import com.bridgelabz.spring.model.User;
 
 public class UserValidator implements Validator{
-	
+
 	final String REGEX_USERNAME="[a-zA-Z ]*$";
 	final String REGEX_EMAILID="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 	final String REGEX_MOBILENUMBER="^[0-9]{10}$";
@@ -19,7 +18,7 @@ public class UserValidator implements Validator{
 	}
 
 	public void validate(Object target, Errors errors) {
-		
+
 		User user = (User) target;
 		if(!(user.getName().matches(REGEX_USERNAME)))
 		{
@@ -46,6 +45,6 @@ public class UserValidator implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
 		ValidationUtils.rejectIfEmpty(errors, "emailId","emailId.required");
 		ValidationUtils.rejectIfEmpty(errors, "mobileNumber","mobileNumber.required");
-		
+
 	}
-	}
+}

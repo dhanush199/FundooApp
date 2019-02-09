@@ -14,9 +14,9 @@ public interface UserServiceInf {
 
 	User updateUser(String token, User user, HttpServletRequest request);
 
-	User deleteUser(String token, HttpServletRequest request);
+	User deleteUser(String token, HttpServletRequest request,HttpServletResponse resp);
 
 	User activateUser(String token, HttpServletRequest request);
 
-	User getUserByEmail(String token, HttpServletRequest request,User newPassword);
+	User getUserByEmail(String token, HttpServletRequest request,User newPassword,HttpServletResponse response);
 }

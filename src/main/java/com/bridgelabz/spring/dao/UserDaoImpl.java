@@ -49,7 +49,7 @@ public class UserDaoImpl implements UserDaoInf {
 				System.out.println("User detail is=" + existingUser.getId() + "," + existingUser.getName() + "," + existingUser.getEmailId() + ","
 						+ existingUser.getMobileNumber());
 				String token = tokenGenerator.generateToken(String.valueOf(existingUser.getId()));
-				resp.setHeader("userId", token);
+				resp.setHeader("token", token);
 				session.close();
 				return existingUser;
 			}
@@ -98,17 +98,16 @@ public class UserDaoImpl implements UserDaoInf {
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery("from User where emailId= :emailId");
 		query.setString("emailId", emailId);
-		User user = (User) query.uniqueResult();
-		if (user != null) {
-			System.out.println("User detail is=" + user.getId() + "," + user.getName() + "," + user.getEmailId() + ","
-					+ user.getMobileNumber());
+		User aliveUser = (User) query.uniqueResult();
+		if (aliveUser != null) {
+			System.out.println("User detail is=" + aliveUser.getId() + "," + aliveUser.getName() + "," + aliveUser.getEmailId() + ","
+					+ aliveUser.getMobileNumber());
 			session.close();
-			return user;
+			return aliveUser;
 		} else {
 			session.close();
 			return null;
 		}
 	}
-	
 
 }

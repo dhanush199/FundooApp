@@ -11,7 +11,7 @@ public interface NoteDaoInf {
 
 	boolean createNote(Note user);
 
-	Note getNoteByID(int id);
+	Note getNoteByUserID(int id);
 	
 	Label getLabelByID(int id);
 

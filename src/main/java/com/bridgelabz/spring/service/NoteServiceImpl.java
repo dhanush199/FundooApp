@@ -41,7 +41,7 @@ public class NoteServiceImpl implements NoteServiceInf {
 	@Transactional
 	public Note updateNote(int id,Note user,HttpServletRequest request)
 	{
-		Note aliveNote=noteDaoInf.getNoteByID(id);
+		Note aliveNote=noteDaoInf.getNoteByUserID(id);
 		if(aliveNote!=null) {
 			aliveNote.setTitle(user.getTitle());
 			aliveNote.setDiscription(user.getDiscription());
@@ -51,7 +51,7 @@ public class NoteServiceImpl implements NoteServiceInf {
 
 	@Transactional
 	public Note deleteNote(int id,HttpServletRequest request) {
-		Note aliveUser=noteDaoInf.getNoteByID(id);
+		Note aliveUser=noteDaoInf.getNoteByUserID(id);
 		noteDaoInf.deleteNote(id);
 		return aliveUser;
 	}
@@ -64,6 +64,7 @@ public class NoteServiceImpl implements NoteServiceInf {
 		}
 		return null;
 	}
+
 	@Transactional
 	public boolean createLabel(int id,Label label, HttpServletRequest request){
 		User residingUser=userDaoInf.getUserById(id);
@@ -82,6 +83,7 @@ public class NoteServiceImpl implements NoteServiceInf {
 		noteDaoInf.deleteLabel(id);
 		return aliveLabel;
 	}
+
 	@Transactional
 	public Label editLabel(int id,Label label,HttpServletRequest req)
 	{
@@ -90,7 +92,9 @@ public class NoteServiceImpl implements NoteServiceInf {
 			aliveLabel.setLabelName(label.getLabelName());
 			noteDaoInf.editLabel(id, aliveLabel);
 		}
-		return aliveLabel;}
+		return aliveLabel;
+	}
+
 	@Transactional
 	public List<Label> retrieveLabel(int id,HttpServletRequest request) {
 		List<Label> notes = noteDaoInf.retrieveLabel(id);
@@ -105,7 +109,7 @@ public class NoteServiceImpl implements NoteServiceInf {
 		int id = tokenGenerator.authenticateToken(token);
 		User existingUser = userDaoInf.getUserById(id);
 		if (existingUser != null) {
-			Note note = noteDaoInf.getNoteByID(noteId);
+			Note note = noteDaoInf.getNoteByUserID(noteId);
 			Label label = noteDaoInf.getLabelByID(labelId);
 			List<Label> labels = note.getLabelList();
 			labels.add(label);
@@ -117,11 +121,13 @@ public class NoteServiceImpl implements NoteServiceInf {
 		}
 		return false;
 	}
+	
+	@Transactional
 	public boolean removeNoteLabel(String token, int noteId, int labelId, HttpServletRequest request) {
 		int id = tokenGenerator.authenticateToken(token);
 		User user = userDaoInf.getUserById(id);
 		if (user != null) {
-			Note residingNote = noteDaoInf.getNoteByID(noteId);
+			Note residingNote = noteDaoInf.getNoteByUserID(id);
 			List<Label> labels = residingNote.getLabelList();
 			if (!labels.isEmpty()) {
 				labels = labels.stream().filter(label -> label.getLabelId() != labelId)

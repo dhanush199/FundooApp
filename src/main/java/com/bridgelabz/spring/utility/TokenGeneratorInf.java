@@ -12,4 +12,5 @@ public interface TokenGeneratorInf {
 	int authenticateToken(String token);
 	
 	public String generateUrl(String joinUrl,User user,HttpServletRequest req,HttpServletResponse resp);
+
 }

@@ -3,7 +3,6 @@ package com.bridgelabz.spring.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,31 +28,25 @@ public class UserController {
 
 	@Autowired
 	private UserServiceInf userService;
-	////////////////////////
-	////////////////////////
 	//////////////////////////
-User users = new User();
-	
+	User users = new User();
+
 	@Autowired
 	@Qualifier("userValidator")
 	private org.springframework.validation.Validator validator;
-	
+
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
 		binder.setValidator( validator);
 	}
-	
+
 	@GetMapping("index")
 	public ModelAndView register(User user) {
-		return new ModelAndView("register");
+		return new ModelAndView("registeruser");
 	}
+	//////////////////////////
 
-	
-	//////////////////////////
-	/////////////////////////
-	//////////////////////////
-	///////////////////////
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@RequestMapping(value = "/registeruser", method = RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@Validated @RequestBody User user, HttpServletRequest request,HttpServletResponse resp) {
 		if (userService.register(user, request,resp))
 			return new ResponseEntity<String>("Successfully Updated",HttpStatus.OK);
@@ -61,18 +54,19 @@ User users = new User();
 			return new ResponseEntity<String>("Please enter the valid details",HttpStatus.CONFLICT);
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/loginuser", method = RequestMethod.POST)
 	public ResponseEntity<?> loginUser(@RequestBody User user, HttpServletRequest request,HttpServletResponse resp) {
 
 		User exsistingUser = userService.loginUser(user,request,resp);
 		if (exsistingUser != null) {
+
 			return new ResponseEntity<User>(exsistingUser, HttpStatus.FOUND);
 		} else {
 			return new ResponseEntity<String>("Incorrect emailId or password or Your Account is not Activated(Please activate from your registered mai)", HttpStatus.NOT_FOUND);
 		}
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.PUT)
+	@RequestMapping(value = "/updateuser", method = RequestMethod.PUT)
 	public ResponseEntity<?> updateUser(@RequestHeader("token") String token, @RequestBody User user,
 			HttpServletRequest request) {
 
@@ -85,10 +79,10 @@ User users = new User();
 		}
 	}
 
-	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteUser(@RequestHeader("token") String token, HttpServletRequest request) {
+	@RequestMapping(value = "/deleteuser", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteUser(@RequestHeader("token") String token, HttpServletRequest request,HttpServletResponse resp) {
 
-		User user = userService.deleteUser(token, request);
+		User user = userService.deleteUser(token, request,resp);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
@@ -109,10 +103,10 @@ User users = new User();
 		}
 	}
 
-	@RequestMapping(value = "/fogotpassword", method = RequestMethod.POST)
-	public ResponseEntity<?> fogotPassword(@PathVariable("token") String token,@RequestBody User newPassword, HttpServletRequest request) {
+	@RequestMapping(value = "/forgotpassword", method = RequestMethod.POST)
+	public ResponseEntity<?> forgotPassword(@RequestHeader("token") String token,@RequestBody User newPassword, HttpServletRequest request,HttpServletResponse resp) {
 
-		User user = userService.getUserByEmail(token, request,newPassword);
+		User user = userService.getUserByEmail(token, request,newPassword,resp);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
@@ -120,10 +114,11 @@ User users = new User();
 					HttpStatus.NOT_FOUND);
 		}
 	}
-	@RequestMapping(value = "/resetpassword/{token:.+}", method = RequestMethod.POST)
-	public ResponseEntity<?> resetPassword(@PathVariable("token") String token,@RequestBody User newPassword, HttpServletRequest request) {
 
-		User user = userService.getUserByEmail(token,request,newPassword);
+	@RequestMapping(value = "/resetpassword/{token:.+}", method = RequestMethod.POST)
+	public ResponseEntity<?> resetPassword(@PathVariable("token") String token,@RequestBody User newPassword, HttpServletRequest request,HttpServletResponse resp) {
+
+		User user = userService.getUserByEmail(token,request,newPassword,resp);
 		if (user != null) {
 			return new ResponseEntity<User>(user, HttpStatus.FOUND);
 		} else {
