@@ -94,9 +94,9 @@ public class UserController {
 	@RequestMapping(value = "/verify/{token:.+}", method = RequestMethod.GET)
 	public ResponseEntity<?> activateUser(@PathVariable("token") String token, HttpServletRequest request) {
 
-		User user = userService.activateUser(token, request);
-		if (user != null) {
-			return new ResponseEntity<User>(user, HttpStatus.FOUND);
+		User registeredUser = userService.activateUser(token, request);
+		if (registeredUser != null) {
+			return new ResponseEntity<User>(registeredUser, HttpStatus.FOUND);
 		} else {
 			return new ResponseEntity<String>("Email incorrect. Please enter valid email address present in database",
 					HttpStatus.NOT_FOUND);
