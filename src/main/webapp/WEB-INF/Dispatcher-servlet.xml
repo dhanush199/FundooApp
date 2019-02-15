@@ -76,4 +76,10 @@
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	<mvc:cors>
+        <mvc:mapping path="/**" allowed-origins="*"
+            allowed-headers="Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With, token"
+            allowed-methods="GET, PUT, POST, DELETE" />
+    </mvc:cors>
 </beans>
+
